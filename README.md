@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Create nextjs : npx create-next-app@latest [project-name]
 
-## Getting Started
+# push code to existing repository : 
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git branch -M main
+    git remote add origin https://github.com/Sreykhuoch/nextja-auth.git
+    git push -u origin main
 
-First, run the development server:
+# folder : 
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    1. create folder src/app/(auth)   {(auth) = route group, easy for managing folder }
+    2. create src/app/(auth)/login  and  create src/(auth)/register
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+# flow : 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- sign in : should be happen in the client first, so we need to use 'use client' because we use onChange to handle input which is a client component ('use client' is a need)
 
-## Learn More
+# Add API route for Next Auth
 
-To learn more about Next.js, take a look at the following resources:
+- to use NextAuth , we have to install : yarn add next-auth (in case use yarn)  / npm install next-auth
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- to add NextAuth.js to a project create a file in app/api/auth/[...nextAuth]/route.js  (this contain the dynamiic route handler for NextAuth.js)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- we also need to give providers (mean that we can log in thorugh github, gitlab, facebook, google, etc..)
 
-## Deploy on Vercel
+- provider is an category  of how we are login 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- gmail and password are called : credentails provider
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# In this practice, we are using credentail provider : 
+
+- so we have to call CredentialProvider({})
+
+# import 
+       import CredentialProvider from "next-auth/providers/credentials"
+       import signIn from "next-auth/react"
+
+-  code : export const authOption = {
+                providers: [
+                    CredentialProvider({})
+                ]
+            };
+
+            const handler = nextAuth(authOption);
+            export {handler as GET, handler as POST};
+
+
+# signIn function  , request 2 parameters : 
+
+    1. providers (log in tam na)
+    2. function to handle input 
+
+# use to set token to cookies
+    callbacks: {
+        async jwt({token, user}){
+            return {...token, ...user};
+        },
+
+        async session({session, token}){
+            session.user = token;
+            return session;
+        }
+    } 
+
+<!-- 32:18  > set token in cookies -->
